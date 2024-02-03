@@ -1,0 +1,39 @@
+<div id="breadcrumbs">
+    {% set teams_url = "<a href='/settings/teams'>Teams</a>" %}
+    {% set team_url = "<a href='/settings/teams/{}'>{}</a>".format(team, team) %}
+
+    <h3>{{ teams_url }} / {{ team_url }} / {{ user }}</h3>
+
+    <div>
+        <button class="btn btn-danger">Remove User</button>
+    </div>
+</div>
+
+<form method="post" action="{{ request.url }}">
+    <div class="mb-3">
+        <div class="mb-3">
+            <label class="form-label">Roles</label>
+            <select class="form-select">
+                <option value="standard">Standard</option>
+                <option value="approver">Approver</option>
+                <option value="admin">Admin</option>
+            </select>
+            <div class="form-text">Approvers can approve leave requests. Admins can also manage the team settings.</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Annual Leave Entitlement</label>
+            <input class="form-control"
+                type="text"
+                name="leaveEntitelement"
+                id="leaveEntitlement"
+                value="25"
+                required/>
+            <div class="form-text">Total days of annual leave entitlement per year.</div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+</form>
+
+<frame-meta data-name="{{ page }}" />

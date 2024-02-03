@@ -316,7 +316,7 @@ class DynamicFrame extends Controller {
      * Loads a URL into the frame by updating the url and param attributes and then reload
      * @param {*} url
      */
-    loadUrl(url, method = "get") {
+    async loadUrl(url, method = "get") {
         let [origin, query] = url.split("?");
         if (!query) query = "";
 
@@ -326,7 +326,7 @@ class DynamicFrame extends Controller {
         }
 
         this.args.url = origin;
-        this.refresh(method);
+        await this.refresh(method);
     }
 
     /**
@@ -389,6 +389,7 @@ class DynamicFrame extends Controller {
 
                 e.preventDefault();
                 const href = target.getAttribute("href");
+                window.history.pushState({}, "", href);
                 this.loadUrl(href);
             }
         });
@@ -450,6 +451,7 @@ class DynamicFrame extends Controller {
                 const query = Object.fromEntries(new URLSearchParams(formData));
                 this.setParams(query);
                 this.args.url = action;
+                window.history.pushState({}, "", action);
                 this.refresh();
             }
 
@@ -489,13 +491,22 @@ class DynamicFrame extends Controller {
 
 /**
  * Container for route anchor elements
- * Any `<a>` elements within the `<dynamic-frame-router>` will be intercepted and only update the specified dynamic frame
+ * Any clicks on `<a>` elements within the `<dynamic-frame-router>` will be intercepted and only update the specified dynamic frame
  * Specifies the target `DynamicFrame` to handle routing for
+ *
+ * Also handles updating active tabs.
+ * Will find all `<a>` tags with a `data-active-for` attribute and update the target frame if one of the values matches the current frames `<frame-meta data-name="" />`.
+ * The value can be a comma separated list of names to match.
  */
 class DynamicFrameRouter extends Controller {
     async init() {
         this.target = document.querySelector(this.args.target);
-        this.anchors = this.querySelectorAll("a");
+
+        // All `a` tags iwth a `data-active-for` attribute will be updated when navigating within this router
+        // The `data-active-for` attribute value can be a comma separated list of `<frame-meta data-name="" />`
+        // values to match against.
+        this.anchors = this.querySelectorAll("a[data-active-for]");
+
         this.cache = {};
         this.args.caching = parseBoolean(this.args.caching);
 
@@ -503,6 +514,8 @@ class DynamicFrameRouter extends Controller {
             console.error(`Could not find target dynamic frame element: ${this.args.target}`);
             return;
         }
+
+        this.setActiveTab();
 
         // Handle clicks
         this.addEventListener("click", e => {
@@ -520,7 +533,12 @@ class DynamicFrameRouter extends Controller {
         };
     }
 
-    async navigate(href, recordInHistory = false) {
+    /**
+     * Navigate to a new frame
+     * @param {string} href The URL to navigate to
+     * @param {boolean} addToHistory Whether to append this navigation to the history
+     */
+    async navigate(href, addToHistory = false) {
         const targetUrl = new URL(href, window.location.origin);
         const oldHref = this.target.args.url;
 
@@ -537,18 +555,26 @@ class DynamicFrameRouter extends Controller {
             await this.target.loadUrl(href);
         }
 
+        this.setActiveTab();
+
+        if (addToHistory) window.history.pushState({}, "", href);
+    }
+
+    setActiveTab() {
         // Update the active anchor
-        this.anchors.forEach(a => {
-            const anchorHref = new URL(a.href);
+        const meta = this.target.querySelector("frame-meta");
+        if (meta) {
+            const activeFrame = meta.getAttribute("data-name");
 
-            if (anchorHref.pathname === targetUrl.pathname) {
-                a.classList.add("active");
-            } else {
-                a.classList.remove("active");
-            }
-        });
-
-        if (recordInHistory) window.history.pushState({}, "", href);
+            this.anchors.forEach(a => {
+                const matches = a.hasAttribute("data-active-for") ? a.getAttribute("data-active-for").split(",") : [];
+                if (matches.includes(activeFrame)) {
+                    a.classList.add("active");
+                } else {
+                    a.classList.remove("active");
+                }
+            });
+        }
     }
 }
 

@@ -13,23 +13,31 @@ The settings pages extend this and specify their content in a `content` block
                 {# Clicking these will only update the target node via DynamicFrame #}
                 {# Active element is worked out from the current URL #}
                 <nav class="nav nav-pills flex-lg-column">
-                    <a class="nav-link{% if page == 'general' %} active{% endif %}"
+                    <a class="nav-link"
                         aria-current="page"
+                        data-active-for="general"
                         href="/settings/general">General</a>
-                    <a class="nav-link{% if page == 'account' %} active{% endif %}"
+                    <a class="nav-link"
+                        data-active-for="account"
                         href="/settings/account">Account</a>
 
                     {% if is_admin %}
-                        <a class="nav-link{% if page == 'admin' %} active{% endif %}"
+                        <a class="nav-link"
+                            data-active-for="admin"
                             href="/settings/admin">Admin</a>
                     {% endif %}
+
+                    {# TODO: Only show if on team plan #}
+                    <a class="nav-link"
+                        data-active-for="teams,team,user,add_team,invite_user"
+                        href="/settings/teams">Teams</a>
                 </nav>
             </dynamic-frame-router>
         </div>
 
         <div class="col">
             <!-- We don't load on init here so we can do the initial load server side using jinjas include -->
-            <dynamic-frame id="main-content" :url="/settings/{{ page }}" :param-block="frame" :render-on-init="0">
+            <dynamic-frame id="main-content" :url="/settings/{{ page }}" :param-block="frame" :render-on-init="0" :contained>
                 <!-- We wrap this in a block as that allows us to load just this section via /settings/general?block=frame -->
                 {% block frame %}
                     {% include "frames/settings/" + page + ".html.j2" %}

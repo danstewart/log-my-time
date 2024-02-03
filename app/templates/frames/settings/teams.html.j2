@@ -1,0 +1,16 @@
+<div id="breadcrumbs">
+    <h3>Teams</h3>
+
+    <div>
+        <a role="button" class="btn btn-primary" href="/settings/teams/add">Add Team</a>
+    </div>
+</div>
+
+{% set teams = ["tour-amigo", "issuebear"] %}
+{% for team in teams %}
+    <div>
+        <a href="/settings/teams/{{ team }}">{{ team }}</a>
+    </div>
+{% endfor %}
+
+<frame-meta data-name="{{ page }}" />

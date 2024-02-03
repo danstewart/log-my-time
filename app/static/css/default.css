@@ -17,6 +17,12 @@
     z-index: 99;
 }
 
+#breadcrumbs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
 /*
 Show menu to the left of the toggle
 This stops the menu going off screen on smaller screens
@@ -62,6 +68,14 @@ a.icon {
 
 .dropdown-item:active {
     background-color: #e9ecef;
+}
+
+.form-label {
+    margin-bottom: 0.1rem;
+}
+
+.form-text {
+    margin-top: 0.1rem;
 }
 
 /* Border radius fixes */

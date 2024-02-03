@@ -1,0 +1,21 @@
+<div id="breadcrumbs">
+    {% set teams_url = "<a href='/settings/teams'>Teams</a>" %}
+
+    <h3>{{ teams_url }} / {{ team }}</h3>
+
+    <div>
+        <a role="button" class="btn btn-primary" href="/settings/teams/invite">Invite User</a>
+    </div>
+</div>
+
+<section name="users">
+    <h5>Users</h5>
+    {% set users = ["user-a", "user-b", "user-c"] %}
+    {% for user in users %}
+        <div>
+            <a href="/settings/teams/{{ team }}/user/{{ user }}">{{ user }}</a>
+        </div>
+    {% endfor %}
+</section>
+
+<frame-meta data-name="{{ page }}" />

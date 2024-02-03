@@ -1,6 +1,6 @@
 <form method="post" action="/settings" with-validation>
     <div class="mb-3">
-        <div class="mb-2">
+        <div class="mb-3">
             <label class="form-label">Time Zone</label>
             <input class="form-control"
                 type="text"
@@ -10,7 +10,7 @@
                 required/>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <label class="form-label">Holiday Location</label>
             <select class="form-select"
                     name="holiday_location"
@@ -34,7 +34,7 @@
             </select>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <label class="form-label">Week Start</label>
             <select class="form-select"
                     name="week_start"
@@ -51,7 +51,7 @@
             </select>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <label class="form-label">Hours Per Day</label>
             <input class="form-control"
                 type="text"
@@ -61,7 +61,7 @@
                 required/>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <label class="form-label">Work Days</label>
             {% set work_days = settings.work_days_list() | list %}
             {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
@@ -80,3 +80,5 @@
     </div>
     <button class="btn btn-primary" type="submit">Save</button>
 </form>
+
+<frame-meta data-name="{{ page }}" />

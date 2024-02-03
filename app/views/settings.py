@@ -116,3 +116,38 @@ def admin_settings():
         flash(f"Added '{title}'", "success")
 
     return render("pages/settings.html.j2", page="admin")
+
+
+@v.route("/settings/teams", methods=["GET", "POST"])
+@login_required
+@frame
+def teams_list():
+    return render("pages/settings.html.j2", page="teams")
+
+
+@v.route("/settings/teams/add", methods=["GET", "POST"])
+@login_required
+@frame
+def add_team():
+    return render("pages/settings.html.j2", page="add_team")
+
+
+@v.route("/settings/teams/invite", methods=["GET", "POST"])
+@login_required
+@frame
+def invite_user():
+    return render("pages/settings.html.j2", page="invite_user")
+
+
+@v.route("/settings/teams/<string:team>", methods=["GET", "POST"])
+@login_required
+@frame
+def team_settings(team):
+    return render("pages/settings.html.j2", page="team", team=team)
+
+
+@v.route("/settings/teams/<string:team>/user/<string:user>", methods=["GET", "POST"])
+@login_required
+@frame
+def team_user_settings(team: str, user: str):
+    return render("pages/settings.html.j2", page="user", team=team, user=user)
