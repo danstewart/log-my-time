@@ -1,6 +1,10 @@
 <h4>Upcoming Holidays</h4>
 <ul>
-    {% for dt, name in upcoming_holidays.items() %}
-        <li>{{ name }} <small>({{ dt }})</small></li>
+    {% for hol in upcoming_holidays %}
+        {% if not hol.public and hol.duration != 1.0 %}
+            <li>{{ hol.name }} - {{ hol.duration }} days <small>({{ hol.date }})</small></li>
+        {% else %}
+            <li>{{ hol.name }} <small>({{ hol.date }})</small></li>
+        {% endif %}
     {% endfor %}
 </ul>

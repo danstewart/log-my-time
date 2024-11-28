@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 
 
@@ -8,3 +9,11 @@ class TimeStats:
     remaining_this_week: str
     remaining_today: str
     overtime: str
+
+
+@dataclass
+class Holiday:
+    name: str
+    date: datetime.date
+    public: bool
+    duration: float

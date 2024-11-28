@@ -31,7 +31,7 @@ def get_next_public_holiday() -> Optional[dict]:
                 return {"name": name, "date": dt}
 
 
-def get_upcoming_holidays() -> dict[str, date]:
+def get_upcoming_holidays() -> dict[date, str]:
     """
     Get all holidays for the current year and the next year
     Returned as a dict of {date: name}
