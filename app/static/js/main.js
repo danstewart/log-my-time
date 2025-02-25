@@ -72,6 +72,18 @@ window.initDatePicker = picker => {
 window.initTomSelect = select => {
     if (select.tomselect) return;
 
+    // Element has been cached by the dynamic-frame-router
+    // We need to do some extra work to re-initialise it
+    if (select.classList.contains("tomselected")) {
+        select.classList.remove("tomselected");
+        select.classList.remove("ts-hidden");
+        select.classList.remove("ts-hidden-accessible");
+
+        if (select.nextElementSibling.classList.contains("ts-wrapper")) {
+            select.nextElementSibling.remove();
+        }
+    }
+
     const options = {};
     new TomSelect(select, options);
 };
