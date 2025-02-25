@@ -33,6 +33,11 @@ def whats_new():
     )
 
 
+@v.get("/contact")
+def contact_page():
+    return render_template("pages/contact.html.j2")
+
+
 @v.get("/about")
 def about_page():
     return render_template("pages/about.html.j2")
