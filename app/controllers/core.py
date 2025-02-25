@@ -37,18 +37,19 @@ def stats() -> TimeStats:
     _tz = _settings.timezone
 
     now = arrow.now(tz=_tz)
-    today = now.replace(hour=0, minute=0, second=0)
+    today_start = now.replace(hour=0, minute=0, second=0)
+    today_end = now.replace(hour=23, minute=59, second=59)
 
     # Set the start point to the first working day of the current week
     if now.weekday() != _settings.week_start_0:
-        week_start = today.shift(weekday=_settings.week_start_0).shift(days=-7)
+        week_start = today_start.shift(weekday=_settings.week_start_0).shift(days=-7)
     else:
-        week_start = today
+        week_start = today_start
 
     # Time logged
     entries_today = [
-        *Time.between(today.int_timestamp, today.int_timestamp + 86400),
-        *Leave.between(today.int_timestamp, today.int_timestamp + 86400),
+        *Time.between(today_start.int_timestamp, today_end.int_timestamp),
+        *Leave.between(today_start.int_timestamp, today_end.int_timestamp),
     ]
     logged_today = sum([rec.logged() for rec in entries_today])
 
@@ -87,7 +88,7 @@ def stats() -> TimeStats:
         first_day = arrow.get(first_time).to(_tz)
         expected_hours = calculate_expected_hours(
             start=first_day,
-            end=today,
+            end=today_end,
             hours_per_day=_settings.hours_per_day,
             days_worked=_settings.work_days,
         )
@@ -96,8 +97,8 @@ def stats() -> TimeStats:
         overtime = -(expected_hours * 60 * 60)  # Convert to seconds
 
         # Now add on what we have worked/taken as leave
-        overtime += sum([rec.logged() for rec in Time.between(0, now.int_timestamp)])
-        overtime += sum([rec.logged() for rec in Leave.between(0, now.int_timestamp)])
+        overtime += sum([rec.logged() for rec in Time.between(0, today_end.int_timestamp)])
+        overtime += sum([rec.logged() for rec in Leave.between(0, today_end.int_timestamp)])
 
     return TimeStats(
         logged_this_week=humanize_seconds(logged_this_week, short=True),
