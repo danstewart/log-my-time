@@ -88,12 +88,14 @@ def enable_csrf_protection(app):
         from flask import request
 
         routes_without_csrf = [
-            "/login",
-            "/logout",
-            "/register",
+            "user.login",
+            "user.logout",
+            "user.handle_login",
+            "user.verify_user_email",
+            "user.password_reset_handler",
         ]
 
-        if request.path in routes_without_csrf:
+        if request.endpoint in routes_without_csrf:
             return
 
         # All forms other than the ones listed above should have a CSRF token
