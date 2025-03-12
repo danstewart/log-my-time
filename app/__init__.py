@@ -150,6 +150,7 @@ def add_globals(app):
             "FLASK_DEBUG": os.getenv("FLASK_DEBUG") == "1",
             "ROLLBAR_CLIENT_TOKEN": app.config.get("ROLLBAR_CLIENT_TOKEN"),
             "ENVIRONMENT": os.getenv("ENVIRONMENT", "local"),
+            "CF_TURNSTILE_SITE_KEY": app.config.get("CF_TURNSTILE_SITE_KEY"),
         }
 
         # If we have a request context then check for a theme in browser session

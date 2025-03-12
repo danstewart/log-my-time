@@ -14,7 +14,7 @@ def register(email: str, password: str) -> User:
     Registers and returns a new user
     If the email is already in use, a UserAlreadyExistsError is raised
     """
-    user = db.session.execute(sa.select(User).filter_by(email=email)).one_or_none()
+    user = db.session.scalars(sa.select(User).filter_by(email=email)).one_or_none()
 
     # If a user already exists with this email then send them a password reset link instead
     if user:

@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request
 from flask import session as flask_session
 
+from app.controllers.captcha import verify_turnstile
 from app.controllers.user.util import is_logged_in
 
 v = Blueprint("user", __name__)
@@ -30,15 +31,20 @@ def handle_login():
     - password reset
     """
     from app.controllers.user import login, register, send_password_reset
-    from app.controllers.user.exceptions import (
-        UserAlreadyExistsError,
-        UserAuthFailed,
-        UserNotVerifiedError,
-    )
+    from app.controllers.user.exceptions import UserAlreadyExistsError, UserAuthFailed, UserNotVerifiedError
 
     action = request.form["action"]
     email = request.form["email"]
     password = request.form["password"]
+    kick_back_to = "/register" if action == "register" else "/login"
+    turnstile = request.form.get("cf-turnstile-response")
+    if not turnstile:
+        flash("Please complete the CAPTCHA.", "danger")
+        return redirect(kick_back_to)
+
+    if not verify_turnstile(turnstile):
+        flash("CAPTCHA verification failed.", "danger")
+        return redirect(kick_back_to)
 
     match [action, email, password]:
         case ["login", email, password]:

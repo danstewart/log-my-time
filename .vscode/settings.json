@@ -34,13 +34,14 @@
         "files.trimTrailingWhitespace": false,
         "editor.formatOnSave": false
     },
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        }
-    },
+	"[python]": {
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+			"source.fixAll": "explicit"
+		}
+	},
     "[jinja-html]": {
         "editor.formatOnSave": false,
         "editor.defaultFormatter": "monosans.djlint"
@@ -60,10 +61,6 @@
         "reportOptionalCall": "information",
         "reportPrivateImportUsage": "information"
     },
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": [
-        "--line-length=120"
-    ],
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
