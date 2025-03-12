@@ -31,7 +31,7 @@ def generate_csrf_token(user_id: int):
 def get_csrf_token() -> str:
     """
     Get the generated CSRF token for the current user from redis.
-    If no token is found then an `InvalidCSRFToken` exception is raised.
+    If no token is found then a `MissingCSRFToken` exception is raised.
     """
 
     from app.controllers.user.util import get_user
@@ -87,8 +87,22 @@ def enable_csrf_protection(app):
     def validate():
         from flask import request
 
-        if request.form and "csrf_token" in request.form:
-            validate_csrf_token(request.form["csrf_token"])
+        routes_without_csrf = [
+            "/login",
+            "/logout",
+            "/register",
+        ]
+
+        if request.path in routes_without_csrf:
+            return
+
+        # All forms other than the ones listed above should have a CSRF token
+        if request.form:
+            csrf_token = request.form.get("csrf_token")
+            if not csrf_token:
+                raise MissingCSRFToken("No CSRF token provided")
+
+            validate_csrf_token(csrf_token)
             form_data = request.form.to_dict()
             form_data.pop("csrf_token")
             request.form = ImmutableDict(form_data)  # type:ignore

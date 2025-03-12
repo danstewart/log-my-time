@@ -56,8 +56,7 @@ def create_app(test_mode: bool = False):
     with app.app_context():
         from app.cli import data
         from app.lib.util.security import enable_csrf_protection
-        from app.views import (callback, core, holidays, leave, settings, time,
-                               user)
+        from app.views import callback, core, holidays, leave, settings, time, user
 
         init_rollbar(app)
         enable_csrf_protection(app)
@@ -132,8 +131,7 @@ def add_globals(app):
         from flask import session as flask_session
 
         from app.controllers.settings import fetch
-        from app.controllers.user.util import (get_user, is_admin,
-                                               is_logged_in, unseen_whats_new)
+        from app.controllers.user.util import get_user, is_admin, is_logged_in, unseen_whats_new
         from app.lib.util.date import humanize_seconds
         from app.lib.util.security import get_csrf_token
 
