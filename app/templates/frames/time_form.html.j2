@@ -4,7 +4,7 @@
     <form id="addEditForm"
           method="post"
           action="/frames/time_form/{{ time.id if time else '' }}">
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-md-6">
                 <label class="form-label" for="start-time">Start Time</label>
                 <div class="input-group">
@@ -67,7 +67,7 @@
                                 data-date-format="H:i"
                                 data-date-value="{{ break_end }}"/>
 
-                            <span class="badge bg-secondary">{{ break.duration }}</span>
+                            <span class="badge bg-secondary">{{ break.duration_pretty }}</span>
                         </div>
                     {% endfor %}
                     <button type="button" class="add-break btn btn-link p-0 mb-2">Add Break</button>

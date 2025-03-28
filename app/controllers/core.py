@@ -6,7 +6,8 @@ import sqlalchemy as sa
 from app import db
 from app.controllers import settings
 from app.controllers.user.util import get_user
-from app.models import Leave, Time, WhatsNew
+from app.models import Break, Leave, Time, WhatsNew
+from app.types import DayOfWeek0Indexed, TimeInSeconds
 from app.viewmodels import TimeStats
 
 
@@ -29,6 +30,7 @@ def _get_first_record_time() -> int | None:
     return min(to_check)
 
 
+# TODO: Need to break this out into smaller functions
 def stats() -> TimeStats:
     """Return the weekly stats"""
     from app.lib.util.date import humanize_seconds
@@ -100,12 +102,39 @@ def stats() -> TimeStats:
         overtime += sum([rec.logged() for rec in Time.between(0, today_end.int_timestamp)])
         overtime += sum([rec.logged() for rec in Leave.between(0, today_end.int_timestamp)])
 
+    # Calculate estimated finish time
+    estimated_finish_time = "N/A"
+    if _settings.is_work_day(now.weekday()):
+        breaks_taken_today = db.session.scalars(
+            sa.select(Break).filter(
+                Break.user_id == get_user().id,
+                Break.start >= today_start.int_timestamp,
+                Break.start <= today_end.int_timestamp,
+            )
+        ).all()
+
+        breaks_taken_today = sum(b.duration * 60 for b in breaks_taken_today)
+        expected_break_duration_today = _average_break_duration_for_day(now, 2)
+        expected_break_duration_today -= breaks_taken_today
+
+        # We've already taken our expected breaks today
+        if expected_break_duration_today < 0:
+            expected_break_duration_today = 0
+
+        time_left_with_breaks = remaining_today + expected_break_duration_today
+
+        if time_left_with_breaks <= 0:
+            estimated_finish_time = "Now"
+        else:
+            estimated_finish_time = now.shift(seconds=time_left_with_breaks).format("HH:mm")
+
     return TimeStats(
         logged_this_week=humanize_seconds(logged_this_week, short=True),
         logged_today=humanize_seconds(logged_today, short=True),
         remaining_this_week=humanize_seconds(remaining_this_week, short=True),
         remaining_today=humanize_seconds(remaining_today, short=True),
         overtime=humanize_seconds(overtime, short=True),
+        estimated_finish_time=estimated_finish_time,
     )
 
 
@@ -153,3 +182,37 @@ def whats_new(limit: Optional[int] = None) -> list[WhatsNew]:
         db.session.commit()
 
     return new
+
+
+def _average_break_duration_for_day(now: arrow.Arrow, day: DayOfWeek0Indexed) -> TimeInSeconds:
+    """
+    Get the average total break duration for a given day over the last 5 weeks
+    """
+    break_durations = []
+
+    while now.weekday() != day:
+        now = now.shift(days=-1)
+
+    for _ in range(5):
+        now = now.shift(weeks=-1)
+        start = now.replace(hour=0, minute=0, second=0).int_timestamp
+        end = now.replace(hour=23, minute=59, second=59).int_timestamp
+
+        breaks = db.session.scalars(
+            sa.select(Break).filter(
+                Break.user_id == get_user().id,
+                Break.start >= start,
+                Break.start <= end,
+            )
+        ).all()
+
+        if not breaks:
+            continue
+
+        break_durations.append(sum(b.duration for b in breaks))
+
+    if not break_durations:
+        return 0
+
+    average_breaks_for_day = int(sum(break_durations) / len(break_durations))
+    return average_breaks_for_day

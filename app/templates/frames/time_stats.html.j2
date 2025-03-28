@@ -1,48 +1,31 @@
 <section id="stats" class="row">
-    <div class="col-md-4 mb-2">
-        <div class="card border">
-            <div class="card-body">
-                <h4 class="card-title">Time Logged</h4>
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="card-subtitle mb-1 mt-1 text-muted">Today</h6>
-                        <p class="card-text fw-bold fs-4">{{ stats.logged_today }}</p>
-                    </div>
-                    <div>
-                        <h6 class="card-subtitle mb-1 mt-1 text-muted">This Week</h6>
-                        <p class="card-text fw-bold fs-4">{{ stats.logged_this_week }}</p>
-                    </div>
+    <div class="card border">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 my-2 text-center">
+                    <h6 class="card-subtitle mb-1 mt-1 text-muted">Time Logged Today</h6>
+                    <p class="card-text fw-bold fs-4">{{ stats.logged_today }}</p>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-2">
-        <div class="card border">
-            <div class="card-body">
-                <h4 class="card-title">Scheduled Time Left</h4>
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="card-subtitle mb-1 mt-1 text-muted">Today</h6>
-                        <p class="card-text fw-bold fs-4">{{ stats.remaining_today }}</p>
-                    </div>
-                    <div>
-                        <h6 class="card-subtitle mb-1 mt-1 text-muted">This Week</h6>
-                        <p class="card-text fw-bold fs-4">{{ stats.remaining_this_week }}</p>
-                    </div>
+
+                <div class="col-md-3 my-2 text-center border-md-end">
+                    <h6 class="card-subtitle mb-1 mt-1 text-muted">Time Remaining Today</h6>
+                    <p class="card-text fw-bold fs-4">{{ stats.remaining_today }}</p>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-2">
-        <div class="card border" style="height: 100%">
-            <div class="card-body">
-                <h4 class="card-title">Overtime</h4>
-                <h6 class="card-subtitle mb-1 mt-1 text-muted">&nbsp;</h6>
-                <p class="card-text fw-bold fs-4">{{ stats.overtime }}</p>
+
+                <div class="col-md-3 my-2 text-center border-md-end">
+                    <h6 class="card-subtitle mb-1 mt-1 text-muted">Estimated Finish Time</h6>
+                    <p class="card-text fw-bold fs-4">{{ stats.estimated_finish_time }}</p>
+                </div>
+                
+                <div class="col-md-3 my-2 text-center">
+                    <h6 class="card-subtitle mb-1 mt-1 text-muted">Overtime</h6>
+                    <p class="card-text fw-bold fs-4">{{ stats.overtime }}</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
 <script>
     (function() {
         const frame = document.currentScript.closest("dynamic-frame");
@@ -65,3 +48,11 @@
         }
     })();
 </script>
+
+<style>
+    @media (min-width: 768px) {
+        #stats > div.card > div.card-body > div.row > div:not(:last-child) {
+            border-right: var(--bs-border-width) solid var(--bs-border-color);
+        }
+    }
+</style>

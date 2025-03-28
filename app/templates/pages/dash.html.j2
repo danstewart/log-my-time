@@ -4,12 +4,44 @@
     <dynamic-frame id="stats" :execute-scripts="true" :url="/frames/stats">
     </dynamic-frame>
 
-    <!-- Clock in/out Form -->
-    <dynamic-frame class="mt-5 mb-5 d-block"
-                   id="clock-form"
-                   :execute-scripts="true"
-                   :url="/frames/clock_in_form">
-    </dynamic-frame>
+    <div class="row mt-5 mb-3">
+        <!-- Clock in/out Form -->
+        <div class="col-md-6 mb-3 mb-md-0">
+            <dynamic-frame class="d-block"
+                        id="clock-form"
+                        :execute-scripts="true"
+                        :url="/frames/clock_in_form">
+            </dynamic-frame>
+        </div>
+
+        {# Control which week we are viewing in the list #}
+        {# NOTE: This does not impact the stats above #}
+        <div class="col-md-6">
+            <div id="week-control" class="d-flex align-items-end justify-content-end">
+                <div class="input-group" style="width: auto">
+                    <button data-type="prev" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <select class="form-select">
+                        {% for week in week_list %}
+                            <option value="{{ week }}">
+                                {% if loop.index == 1 %}
+                                    This Week
+                                {% elif loop.index == 2 %}
+                                    Last Week
+                                {% else %}
+                                    {{ loop.index - 1 }} weeks ago
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button data-type="next" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Time Log Table -->
     <dynamic-frame id="log-table"
@@ -17,31 +49,6 @@
                    :url="/frames/entries"
                    :param-week=""
                    :mount-point=".content">
-        {# Control which week we are viewing in the list #}
-        {# NOTE: This does not impact the stats above #}
-        <div class="d-flex align-items-end justify-content-end pb-2">
-            <div class="input-group" style="width: auto">
-                <button data-type="prev" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i>
-                </button>
-                <select class="form-select">
-                    {% for week in week_list %}
-                        <option value="{{ week }}">
-                            {% if loop.index == 1 %}
-                                This Week
-                            {% elif loop.index == 2 %}
-                                Last Week
-                            {% else %}
-                                {{ loop.index - 1 }} weeks ago
-                            {% endif %}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button data-type="next" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
-        </div>
 
         {# Spinner #}
         <div class="text-center">
@@ -59,8 +66,10 @@
 
     <script>
         // Handle week change
+        const weekControl = document.querySelector("#week-control");
+
         const frame = document.querySelector("#log-table");
-        const select = frame.querySelector("select");
+        const select = weekControl.querySelector("select");
 
         const content = frame.querySelector(".content");
         const spinner = frame.querySelector(".spinner-border");
@@ -77,7 +86,7 @@
             }, 200);
         });
 
-        frame.querySelectorAll("button").forEach(btn => {
+        weekControl.querySelectorAll("button").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const selectedIndex = select.selectedIndex;
                 const type = e.target.closest("button").getAttribute("data-type");
@@ -94,7 +103,7 @@
     </script>
 
     <style>
-        #log-table select {
+        #week-control select {
             background-image: none;
             text-align: center;
             padding-left: 10px;
