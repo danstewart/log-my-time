@@ -203,6 +203,7 @@ def break_start(start: str):
         Break(
             time_id=current_record.id,
             start=start_dt.int_timestamp,
+            user_id=get_user().id,
         )
     )
 
@@ -259,6 +260,7 @@ def add_break(time_id: str, break_start: str, break_end: str | None):
             time_id=time_record.id,
             start=start_dt.int_timestamp,
             end=end_dt.int_timestamp if end_dt else None,
+            user_id=get_user().id,
         )
     )
 

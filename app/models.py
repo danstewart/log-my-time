@@ -7,9 +7,12 @@ from argon2.exceptions import VerifyMismatchError
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from app import Model, db
+from app.types import DayOfWeek0Indexed, TimeInSeconds
 
 UnixTimestamp = int
 DurationDays = float
+
+DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 
 class BaseModel(Model):  # type: ignore
@@ -190,18 +193,27 @@ class Break(BaseModel):
     start: Mapped[UnixTimestamp] = mapped_column(sa.Integer)
     end: Mapped[Optional[UnixTimestamp]] = mapped_column(sa.Integer, nullable=True)
     note: Mapped[Optional[str]] = mapped_column(sa.String(255), nullable=True)
+    user_id: Mapped[int] = mapped_column(sa.Integer, sa.ForeignKey("user.id"), nullable=False)
 
     time: Mapped[Time] = relationship("Time", viewonly=True, back_populates="breaks")
 
     @property
-    def duration(self) -> str:
+    def duration_pretty(self) -> str:
+        minutes = self.duration / 60
+        return f"{minutes} minutes" if minutes != 1 else "1 minute"
+
+    @property
+    def duration(self) -> TimeInSeconds:
+        """
+        Return the duration of this break in minutes
+        """
         if self.end:
             diff = arrow.get(self.end) - arrow.get(self.start)
         else:
             diff = arrow.now() - arrow.get(self.start)
 
-        minutes = int(int(diff.total_seconds()) / 60)
-        return f"{minutes} minutes" if minutes != 1 else "1 minute"
+        duration_in_seconds = int(diff.total_seconds())
+        return duration_in_seconds
 
 
 class Leave(TimeHelperMixin, BaseModel):
@@ -262,14 +274,19 @@ class Settings(BaseModel):
 
     def work_days_list(self) -> list[str]:
         work_days = []
-        day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        for day, day_name in zip(self.work_days, day_names):
+        for day, day_name in zip(self.work_days, DAYS_OF_WEEK):
             if day != "-":
                 work_days.append(day_name)
         return work_days
 
     def total_work_days(self):
         return sum([1 if day != "-" else 0 for day in self.work_days])
+
+    def is_work_day(self, day: DayOfWeek0Indexed) -> bool:
+        """
+        Check if the provided day name is a work day
+        """
+        return DAYS_OF_WEEK[day] in self.work_days_list()
 
 
 class WhatsNew(BaseModel):

@@ -16,7 +16,9 @@
               sizes="32x32"
               href="/static/icons/favicon-32x32.png"/>
 
-        {% include 'partials/assets/rollbar.html.j2' %}
+        {% if ENVIRONMENT != "local" %}
+            {% include 'partials/assets/rollbar.html.j2' %}
+        {% endif %}
 
         <!-- Third party assets -->
         {# djlint:off #}

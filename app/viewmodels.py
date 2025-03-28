@@ -8,3 +8,4 @@ class TimeStats:
     remaining_this_week: str
     remaining_today: str
     overtime: str
+    estimated_finish_time: str
