@@ -13,7 +13,7 @@
                 </div>
                 {% for line in new.content.split("\n") %}
                     {% if line.strip() | length %}
-                        <p class="mb-0">{{ line.strip() }}</p>
+                        <p class="mb-0">{{ line }}</p>
                     {% else %}
                         <div style="height: 0.5em"></div>
                     {% endif %}
@@ -27,4 +27,10 @@
     {% else %}
         <p>Nothing to see here...</p>
     {% endif %}
+
+    <style>
+        p {
+            white-space: pre-wrap;
+        }
+    </style>
 {% endblock content %}
