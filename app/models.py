@@ -199,7 +199,7 @@ class Break(BaseModel):
 
     @property
     def duration_pretty(self) -> str:
-        minutes = self.duration / 60
+        minutes = int(self.duration / 60)
         return f"{minutes} minutes" if minutes != 1 else "1 minute"
 
     @property

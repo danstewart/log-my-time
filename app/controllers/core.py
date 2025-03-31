@@ -113,12 +113,13 @@ def stats() -> TimeStats:
             )
         ).all()
 
-        breaks_taken_today = sum(b.duration * 60 for b in breaks_taken_today)
-        expected_break_duration_today = _average_break_duration_for_day(now, 2)
+        breaks_taken_today = sum(b.duration for b in breaks_taken_today)
+        expected_break_duration_today = _average_break_duration_for_day(now, now.weekday())
         expected_break_duration_today -= breaks_taken_today
 
         # We've already taken our expected breaks today
-        if expected_break_duration_today < 0:
+        # We ignore expected breaks shorter than 5 minutes
+        if expected_break_duration_today < 300:
             expected_break_duration_today = 0
 
         time_left_with_breaks = remaining_today + expected_break_duration_today
