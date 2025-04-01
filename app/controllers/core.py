@@ -124,7 +124,7 @@ def stats() -> TimeStats:
 
         time_left_with_breaks = remaining_today + expected_break_duration_today
 
-        if time_left_with_breaks <= 0:
+        if remaining_today == 0 or time_left_with_breaks <= 0:
             estimated_finish_time = "Now"
         else:
             estimated_finish_time = now.shift(seconds=time_left_with_breaks).format("HH:mm")
