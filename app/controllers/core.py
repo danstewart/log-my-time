@@ -122,6 +122,12 @@ def stats() -> TimeStats:
         if expected_break_duration_today < 300:
             expected_break_duration_today = 0
 
+        # Round expected breaks to nearest 5 minutes
+        if expected_break_duration_today > 0:
+            expected_break_duration_today_mins = expected_break_duration_today / 60
+            expected_break_duration_today_mins = 5 * round(expected_break_duration_today_mins / 5)
+            expected_break_duration_today = expected_break_duration_today_mins * 60
+
         time_left_with_breaks = remaining_today + expected_break_duration_today
 
         if remaining_today == 0 or time_left_with_breaks <= 0:
