@@ -30,6 +30,8 @@ def handle_login():
     - register
     - password reset
     """
+    import os
+
     from app.controllers.user import login, register, send_password_reset
     from app.controllers.user.exceptions import UserAlreadyExistsError, UserAuthFailed, UserNotVerifiedError
 
@@ -37,14 +39,17 @@ def handle_login():
     email = request.form["email"]
     password = request.form["password"]
     kick_back_to = "/register" if action == "register" else "/login"
-    turnstile = request.form.get("cf-turnstile-response")
-    if not turnstile:
-        flash("Please complete the CAPTCHA.", "danger")
-        return redirect(kick_back_to)
 
-    if not verify_turnstile(turnstile):
-        flash("CAPTCHA verification failed.", "danger")
-        return redirect(kick_back_to)
+    # Skip captcha when running locally
+    if os.getenv("ENVIRONMENT") != "local":
+        turnstile = request.form.get("cf-turnstile-response")
+        if not turnstile:
+            flash("Please complete the CAPTCHA.", "danger")
+            return redirect(kick_back_to)
+
+        if not verify_turnstile(turnstile):
+            flash("CAPTCHA verification failed.", "danger")
+            return redirect(kick_back_to)
 
     match [action, email, password]:
         case ["login", email, password]:
