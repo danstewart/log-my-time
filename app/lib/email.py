@@ -1,4 +1,3 @@
-import sendgrid
 from flask import current_app as app
 
 from app.lib.logger import get_logger
@@ -14,16 +13,18 @@ def send_email(to_email: str, subject: str, html: str):
     `subject`: The mail subject line
     `html`: The HTML mail body
     """
-    message = sendgrid.Mail(
-        from_email=app.config["FROM_EMAIL"],
-        to_emails=to_email,
+    from postmark import PMMail, PMMailSendException
+
+    message = PMMail(
+        api_key=app.config["POSTMARK_API_KEY"],
+        sender=app.config["FROM_EMAIL"],
+        to=to_email,
         subject=subject,
-        html_content=html,
+        html_body=html,
     )
 
     try:
-        sg = sendgrid.SendGridAPIClient(api_key=app.config["SENDGRID_API_KEY"])
-        response = sg.send(message)
+        response = message.send()
         return response
-    except sendgrid.SendGridException as e:
+    except PMMailSendException as e:
         logger.exception(e)
