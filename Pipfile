@@ -12,7 +12,6 @@ click = "*"
 Flask = "==3.1.0"
 argon2-cffi = "*"
 redis = "*"
-sendgrid = "*"
 sqlalchemy = ">2,<3"
 holidays = "*"
 rollbar = "*"
@@ -21,6 +20,7 @@ flask-sqlalchemy-lite = "*"
 flask-alembic = "*"
 gunicorn = {extras = ["gthread"], version = "*"}
 pytz = "*"
+python-postmark = "*"
 
 [dev-packages]
 pytest = "*"
