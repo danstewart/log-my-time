@@ -35,6 +35,9 @@ pipenv install --categories="packages dev-packages local-packages"
 
 # Start a pipenv shell
 pipenv shell
+
+# Upgrade dependencies
+python3 -m pipenv upgrade --categories="packages dev-packages local-packages"
 ```
 
 #### Connecting to the database
@@ -50,7 +53,7 @@ pipenv shell
 ./tools/ctl test
 
 # Or a subset of tests
-./tools/ctl test tests/e2e/test_time.py tests/e2e/test_holidays.py
+./tools/ctl test tests/unit/test_calculate_expected_hours.py
 ```
 
 #### Database migrations

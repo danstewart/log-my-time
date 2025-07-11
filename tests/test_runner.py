@@ -61,7 +61,7 @@ def run_tests():
     print("Running tests...")
     sys.stdout.flush()
 
-    do_e2e = True
+    do_e2e = False  # TODO: Change this to True once we add e2e tests
     do_unit = True
 
     specific_tests = sys.argv[1:]
