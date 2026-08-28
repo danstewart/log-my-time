@@ -43,6 +43,12 @@ window.initDatePicker = picker => {
     } else if (pickerType === "date") {
         let defaultValue = value;
         if (!value && setDefault) defaultValue = date;
+
+        // The default is there so today's date can be saved without opening the picker.
+        // Once the picker is opened the user is changing the date, so drop the default
+        // rather than let it anchor the start of a range.
+        let defaultCleared = !(!value && setDefault);
+
         flatpickr(picker, {
             altInput: true,
             altFormat: dateFormat || "F j, Y",
@@ -52,6 +58,11 @@ window.initDatePicker = picker => {
                 firstDayOfWeek: 1,
             },
             mode: picker.hasAttribute("data-is-range") ? "range" : "single",
+            onOpen: (selectedDates, dateStr, instance) => {
+                if (defaultCleared) return;
+                defaultCleared = true;
+                instance.clear();
+            },
         });
     } else if (pickerType === "datetime") {
         let defaultValue = value;
