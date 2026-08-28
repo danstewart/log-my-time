@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [ 
     "arrow",
     "click",
-    "Flask==3.1.0",
+    "Flask==3.1.1",
     "argon2-cffi",
     "redis",
     "sqlalchemy>2,<3",
